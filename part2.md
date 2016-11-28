@@ -4,18 +4,73 @@ Given that we have a "customer" resource/model in our web server,
 
 1 - How would you design the routes of your server based on REST convention? List them with VERB and /route
 
-app.get - read
-app.post - create
-app.put - update
-app.delete - destroy
 
+router.get('/customer', (req, res) => {
+   db.customer.findAll({ order: 'id DESC' }).then((customer) => {
+      res.render('customer/index', { customer:customer });
+   });
+});
+
+router.get('/customer/edit', (req, res) => {
+   db.customer.findAll({ order: 'id DESC' }).then((customer) => {
+      res.render('customer/edit', { customer: customer, user: req.session.user });
+   });
+});
+
+router.customer('/customer', (req, res) => {
+   db.customer.create(req.body).then((customer) => {
+      res.redirect('/' + customer.slug);
+   }).catch((error) => {
+      res.render('customer/new', { errors: error.errors, user: req.session.user })
+   });
+});
+
+router.get('/customer/new', (req, res) => {
+   res.render('customer/new', { user: req.session.user });
+});
+
+
+router.get('/customer/:id/edit', (req, res) => {
+   db.customer.findOne(req.body, {
+      where: {
+         id: req.params.id
+      }
+   }).then((customer) => {
+      res.render('customer/edit', { customer : customer, user: req.session.user });
+   });
+});
+
+router.put('/customer/:id', (req, res) => {
+   db.customer.update(req.body, {
+      where: {
+         id: req.params.id
+      }
+   }).then(() => {
+      res.redirect('/admin/customer');
+   }).catch((error, customer) => {
+      res.render('customer/edit', { errors: error.errors, user: req.session.user, customer: customer });
+   });
+});
+
+router.delete('/customer/:id', (req, res) => {
+   db.customer.destroy({
+      where: {
+         id: req.params.id
+      }
+   }).then(() => {
+      res.redirect('/customer');
+   });
+});
+
+
+module.exports = router;
 
 2 - Which pages would require templates, and how would you name them? List them with /route and template-name.extension
 
-edit.pug  - get/post/delete
+edit.pug  - get/customer/delete
 show.pug  - get
 index.pug - get
-new.pug  - get/post
+new.pug  - get/customer
 
 =========
 
@@ -28,7 +83,7 @@ unique - has to be unique, not the same value as in another column
 
 4 - What is a foreign key? Given that you have a Factory that has many cars and car that belongs to a factory, What would be your foreign key column?
 
-Foreign key has a relation to another table is out database. For example when we created our comments table, we needed it to have a relation to the posts table. So we created a foreign key on our comments table that could relate to the primary key in the posts table.
+Foreign key has a relation to another table is out database. For example when we created our comments table, we needed it to have a relation to the customer table. So we created a foreign key on our comments table that could relate to the primary key in the customer table.
 
 5 - List all the model lifecycle hooks you have learned from sequelize and explain them briefly if necessary.
 
@@ -53,11 +108,12 @@ after.destroy
 
 6 - What is the difference between database-level validations and application-level validations?
 
-One is made in the on a database-level and one in the application, it is a better practice to have a "fat model" rather than too many constraints on the db. If you change something in the model you don't need to run a migration. Also, the validations in the app runs before the database validations.
+One is made in the on a database-level and one in the application. It is better to have many constraints on the database rather than in the model.
 
 7 - Why do we use bcrypt. Write down 3 reasons why we use it if you can.
 
 To secure the passwords in the database, if someone get access to our database, it will not see the password, but the encrypted version of it. Bcrypt is super slow which also makes it super hard to hack, compared to salting for example. Good for integrity.
+Bcrypt compare two hashes.
 
 8 - What is a flash message?
 

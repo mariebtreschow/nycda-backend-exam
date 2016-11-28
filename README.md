@@ -18,8 +18,7 @@ It acts between the server and the client and can execute any code.
 
 ### 3 - Why do we use express.static() middleware?
 
-To be able to use functions/code from other files in our application. For example the 'public' files in our public folder, which
-usually contain CSS stylesheets, images, jquery etc.
+To serve static files such as CSS, images and JavaScript files.
 
 ### 4 - What is favicon.ico ?
 
@@ -31,12 +30,15 @@ So that we can use: req.body in our functions/routes. It requires a whole body i
 
 ### 6 - What is the difference between parsing a data received from a web form with POST and an AJAX POST request?
 
-POST request reloads the page and the AJAX POST request doesn't, it is good for making the page more interactive and easier to navigate on for the user.
-One of the difference is the bodyparsing, the AJAX request is a stringified JSON. The POST is also more secure than the AJAX.
+They both run the same code, but the difference is the body parsing. Web forms serialize the data as formurlencoded format while AJAX POST request is a stringified JSON. Also both request would expect different type of responses, json request could receive a json response while web form requests generally receive redirect as a response and a status code.
 
 ### 7 - Why do we use methodOverride middleware ?
 
-This overrides a method with another value, in our app we use it for deleting a post, so we turn the POST request to a delete or put
+This overrides a method with another value, in our app we use it for deleting a post, so we turn the POST request to a delete or put.
+It sass an optional key to use when checking for a method override, otherwise defaults to method.
+The original method is available through req.originalMethod
+
+String key --> returns Function
 
 example:
 form(action="/admin/posts/" + post.id method="POST
@@ -49,8 +51,8 @@ Sessions can also hold objects, not just strings.
 
 ### 9 - Why do we use a session middleware ?
 
-Because the session middleware let's use store and retrieve data on a per-site-visitor basis, it stores it on the server side and sends it as cookies. We use this for login with users for example.
+Because the session middleware let's use store and retrieve data on a per-site-visitor basis, it stores it on the server side and sends it as cookies. We use this for login with users for example. Sessions are accessible through the request object in each route. You can get and set properties just like you would when handling an object normally.
 
 ### 10 - Why do we use a build process ?
 
-Making your front-end work a little easier to handle and build by for example minify
+Making your front-end work a little easier to handle and build by for example minify.
